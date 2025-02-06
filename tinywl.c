@@ -333,7 +333,7 @@ static void handle_touch_event_down(struct wl_listener *listener, void *data) {
 	// 	wl_container_of(server->toplevels.prev, next_toplevel, link);
 	// focus_toplevel(next_toplevel, next_toplevel->xdg_toplevel->base->surface);
 	fprintf(stderr, "DOWN event_x: %f, event_y: %f\n", event->x, event->y);
-	if (event->x < 0.5 && event->y > 0.5) {
+	if (event->x < 0.1 && event->y > 0.98) {
 		swipe = true;
 		return;
 	}
@@ -364,7 +364,7 @@ static void handle_touch_event_up(struct wl_listener *listener, void *data) {
 	fprintf(stderr, "UP event_x: %f, event_y: %f\n", swipe_pos_x, swipe_pos_y);
 	if (swipe) {
 		// if we end up in the middle of the screen, we should switch to the next toplevel
-		if (swipe_pos_x > 0.5 && swipe_pos_y < 0.5) {
+		if (swipe_pos_x > 0.1 && swipe_pos_y < 0.98) {
 			fprintf(stderr, "swipe to the right\n");
 			if (wl_list_length(&server->toplevels) < 2) {
 				return;
@@ -374,7 +374,7 @@ static void handle_touch_event_up(struct wl_listener *listener, void *data) {
 			focus_toplevel(next_toplevel, next_toplevel->xdg_toplevel->base->surface);
 		}
 	}
-
+	swipe = false;
 }
 
 static void handle_touch_event_motion(struct wl_listener *listener, void *data) {
