@@ -15,6 +15,7 @@ xdg-shell-protocol.h:
 tinywl: tinywl.c xdg-shell-protocol.h
 	$(CC) $(CFLAGS) \
 		-g -Werror -I. \
+		-Wl,--hash-style=gnu \
 		-DWLR_USE_UNSTABLE \
 		-o $@ $< \
 		$(LIBS)
