@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <linux/input-event-codes.h>
 #include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -346,12 +347,21 @@ static void handle_touch_event_down(struct wl_listener *listener, void *data) {
         focus_toplevel(toplevel, surface);
     }
 
-    if (surface) {
+    if (surface && wlr_surface_accepts_touch(server->seat, surface)) {
 		wlr_seat_touch_notify_down(server->seat, surface, event->time_msec,
 				event->touch_id, event->x, event->y);
 	}
 	else{
-		fprintf(stderr, "no surface found\n");
+		fprintf(stderr, "no surface found that supports touch\n");
+		// Set the cursor position
+		wlr_seat_pointer_notify_motion(server->seat, event->time_msec, event->x, event->y);
+		wlr_seat_pointer_notify_frame(server->seat);
+
+		// Simulate a left mouse button click
+		wlr_seat_pointer_notify_button(server->seat, event->time_msec,
+			BTN_LEFT, WLR_BUTTON_PRESSED);
+		wlr_seat_pointer_notify_button(server->seat, event->time_msec,
+			BTN_LEFT, WLR_BUTTON_RELEASED);
 	}
 }
 
